@@ -109,6 +109,26 @@ export default function App() {
         </div>
       </div>
 
+      {/* How to test */}
+      <div className="px-6 py-3 bg-gray-900/50 border-b border-gray-800">
+        <details className="group">
+          <summary className="text-xs text-gray-400 cursor-pointer hover:text-gray-200 transition-colors list-none flex items-center gap-2">
+            <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
+            How to test this
+          </summary>
+          <div className="mt-3 space-y-2 text-xs text-gray-400">
+            <p>1. Copy your webhook URL above</p>
+            <p>2. Send a request to it using curl, Postman, or any webhook-enabled service (Stripe, GitHub, etc.)</p>
+            <p>3. Watch the request appear in the left panel — click it to inspect the body, headers, and query params</p>
+            <p className="mt-2 font-mono bg-gray-800 rounded-lg p-3 text-green-400 leading-relaxed">
+              curl -X POST <span className="text-white">{webhookUrl || 'YOUR_WEBHOOK_URL'}</span> \<br />
+              {'  '}-H "Content-Type: application/json" \<br />
+              {'  '}-d '{`{"event":"order.created","amount":99.99}`}'
+            </p>
+          </div>
+        </details>
+      </div>
+
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Request list */}
