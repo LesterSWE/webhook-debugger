@@ -5,7 +5,14 @@ const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://webhook-debugger.lesterdominguez.com',
+    'https://webhook-debugger-gamma.vercel.app',
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.text());
@@ -30,6 +37,7 @@ app.get('/listen/:sessionId', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders();
 
   sseClients.set(sessionId, res);
@@ -40,7 +48,13 @@ app.get('/listen/:sessionId', (req, res) => {
     res.write(`data: ${JSON.stringify(entry)}\n\n`);
   }
 
+  // Keep-alive ping every 25 seconds to prevent proxy timeout
+  const keepAlive = setInterval(() => {
+    res.write(': ping\n\n');
+  }, 25000);
+
   req.on('close', () => {
+    clearInterval(keepAlive);
     sseClients.delete(sessionId);
   });
 });
